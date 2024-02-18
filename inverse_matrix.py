@@ -1,6 +1,14 @@
 from colors import bcolors
 from matrix_utility import row_addition_elementary_matrix, scalar_multiplication_elementary_matrix
+from matrix_utility import partial_pivoting
 import numpy as np
+"""
+date:19/2/24
+group members: (1) name: Shulamit-mor-yossef. id: 206576977. (2) name: Zohar-monsonego. id: 214067662. (3) name: hodaya-shirazie. id: 213907785.
+submitted by: name: Hodaya-shirazie. id: 213907785.
+input: 
+output:
+"""
 
 """
 Function that find the inverse of non-singular matrix
@@ -8,6 +16,7 @@ The function performs elementary row operations to transform it into the identit
 The resulting identity matrix will be the inverse of the input matrix if it is non-singular.
  If the input matrix is singular (i.e., its diagonal elements become zero during row operations), it raises an error.
 """
+
 
 def inverse(matrix):
     print(bcolors.OKBLUE, f"=================== Finding the inverse of a non-singular matrix using elementary row operations ===================\n {matrix}\n", bcolors.ENDC)
@@ -17,10 +26,20 @@ def inverse(matrix):
     n = matrix.shape[0]
     identity = np.identity(n)
 
-    # Perform row operations to transform the input matrix into the identity matrix
     for i in range(n):
+
         if matrix[i, i] == 0:
-            raise ValueError("Matrix is singular, cannot find its inverse.")
+            print(bcolors.YELLOW, "do pivoting------------------------------------------------------------------------------------------------------------", bcolors.ENDC)
+            matrix, identity = partial_pivoting(matrix, i, n, identity)
+            print(bcolors.OKGREEN,
+                  "------------------------------------------------------------------------------------------------------------------",
+                  bcolors.ENDC)
+            print("identity matrix after pivoting: \n" + str(identity))
+            print(bcolors.OKGREEN,
+                  "------------------------------------------------------------------------------------------------------------------",
+                  bcolors.ENDC)
+
+
 
         if matrix[i, i] != 1:
             # Scale the current row to make the diagonal element 1
@@ -43,23 +62,26 @@ def inverse(matrix):
                 print(bcolors.OKGREEN, "------------------------------------------------------------------------------------------------------------------",
                       bcolors.ENDC)
                 identity = np.dot(elementary_matrix, identity)
+        print("identity matrix: \n" + str(identity))
+        print(bcolors.OKGREEN,
+              "------------------------------------------------------------------------------------------------------------------",
+              bcolors.ENDC)
 
     return identity
 
 
 if __name__ == '__main__':
 
-    A = np.array([[1, 2, 3],
-                  [2, 3, 4],
-                  [3, 4, 6]])
+    A_b = np.array([[8, 1, 9],
+                 [0, 0, 3],
+                    [1, 0, 0]])
 
     try:
-        A_inverse = inverse(A)
+        A_inverse = inverse(A_b)
         print(bcolors.OKBLUE, "\nInverse of matrix A: \n", A_inverse)
         print("=====================================================================================================================", bcolors.ENDC)
 
     except ValueError as e:
         print(str(e))
-
 
 

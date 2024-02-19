@@ -2,6 +2,7 @@ from colors import bcolors
 from matrix_utility import row_addition_elementary_matrix, scalar_multiplication_elementary_matrix
 from matrix_utility import partial_pivoting
 import numpy as np
+from condition_of_linear_equations import norm
 """
 date:19/2/24
 group members: (1) name: Shulamit-mor-yossef. id: 206576977. (2) name: Zohar-monsonego. id: 214067662. (3) name: hodaya-shirazie. id: 213907785.
@@ -19,13 +20,13 @@ The resulting identity matrix will be the inverse of the input matrix if it is n
 
 
 def inverse(matrix):
-    print(bcolors.OKBLUE, f"=================== Finding the inverse of a non-singular matrix using elementary row operations ===================\n {matrix}\n", bcolors.ENDC)
+    # print(bcolors.OKBLUE, f"=================== Finding the inverse of a non-singular matrix using elementary row operations ===================\n {matrix}\n", bcolors.ENDC)
     if matrix.shape[0] != matrix.shape[1]:
         raise ValueError("Input matrix must be square.")
 
     n = matrix.shape[0]
     identity = np.identity(n)
-
+    t = 0
     for i in range(n):
 
         if matrix[i, i] == 0:
@@ -45,10 +46,13 @@ def inverse(matrix):
             # Scale the current row to make the diagonal element 1
             scalar = 1.0 / matrix[i, i]
             elementary_matrix = scalar_multiplication_elementary_matrix(n, i, scalar)
-            print(f"elementary matrix to make the diagonal element 1 :\n {elementary_matrix} \n")
+            if t < 3:
+                print("Elementary matrix number " + str(t + 1))
+                print(f"elementary matrix to make the diagonal element 1 :\n {elementary_matrix} \n")
+                t = t+1
             matrix = np.dot(elementary_matrix, matrix)
-            print(f"The matrix after elementary operation :\n {matrix}")
-            print(bcolors.OKGREEN, "------------------------------------------------------------------------------------------------------------------",  bcolors.ENDC)
+            # print(f"The matrix after elementary operation :\n {matrix}")
+            # print(bcolors.OKGREEN, "------------------------------------------------------------------------------------------------------------------",  bcolors.ENDC)
             identity = np.dot(elementary_matrix, identity)
 
         # Zero out the elements above and below the diagonal
@@ -56,30 +60,53 @@ def inverse(matrix):
             if i != j:
                 scalar = -matrix[j, i]
                 elementary_matrix = row_addition_elementary_matrix(n, j, i, scalar)
-                print(f"elementary matrix for R{j+1} = R{j+1} + ({scalar}R{i+1}):\n {elementary_matrix} \n")
+                if t < 3:
+                    print("Elementary matrix number " +str(t+1))
+                    print(f"elementary matrix for R{j+1} = R{j+1} + ({scalar}R{i+1}):\n {elementary_matrix} \n")
+                    t = t+1
                 matrix = np.dot(elementary_matrix, matrix)
-                print(f"The matrix after elementary operation :\n {matrix}")
-                print(bcolors.OKGREEN, "------------------------------------------------------------------------------------------------------------------",
-                      bcolors.ENDC)
+                # print(f"The matrix after elementary operation :\n {matrix}")
+                # print(bcolors.OKGREEN, "------------------------------------------------------------------------------------------------------------------",
+                #       bcolors.ENDC)
                 identity = np.dot(elementary_matrix, identity)
-        print("identity matrix: \n" + str(identity))
-        print(bcolors.OKGREEN,
-              "------------------------------------------------------------------------------------------------------------------",
-              bcolors.ENDC)
+        # # print("identity matrix: \n" + str(identity))
+        # # print(bcolors.OKGREEN,
+        #       "------------------------------------------------------------------------------------------------------------------",
+        #       bcolors.ENDC)
 
     return identity
 
 
 if __name__ == '__main__':
 
-    A_b = np.array([[8, 1, 9],
-                 [0, 0, 3],
-                    [1, 0, 0]])
+    print(bcolors.HEADER, "Date:19/2/24\n"
+          "Group members: \n"
+          "(1) name: Shulamit-mor-yossef. id: 206576977. \n"
+          "(2) name: Zohar-monsonego. id: 214067662. \n"
+          "(3) name: hodaya-shirazie. id: 213907785.\n"
+          "Git: https://github.com/shulamitmorjossef/test1\n"
+          "Name: Shulamit Mor Yossef, 206576977.\n"
+
+          "input: [[1, 1 / 2, 1 / 3]\n",
+                      "       [1 / 2, 1 / 3, 1 / 4]\n",
+                      "       [1 / 3, 1 / 4, 1 / 5]] \n"
+                      "The maximum norm of the matrix of coefficients in question 6 and the first three elementary matrices\n\n\n", bcolors.ENDC)
+
+    #
+    # A_b = [[1, 1 / 2, 1 / 3, 1],
+    #        [1 / 2, 1 / 3, 1 / 4, 0],
+    #        [1 / 3, 1 / 4, 1 / 5, 0]]
+
+    A_b_s = np.array([[1, 1 / 2, 1 / 3],
+                      [1 / 2, 1 / 3, 1 / 4],
+                      [1 / 3, 1 / 4, 1 / 5]])
 
     try:
-        A_inverse = inverse(A_b)
-        print(bcolors.OKBLUE, "\nInverse of matrix A: \n", A_inverse)
-        print("=====================================================================================================================", bcolors.ENDC)
+        norm = norm(A_b_s)
+        print("Output:\n \nThe maximum norm of the matrix of coefficients: " + str(norm))
+        A_inverse = inverse(A_b_s)
+        # print(bcolors.OKBLUE, "\nInverse of matrix A: \n", A_inverse)
+        # print("=====================================================================================================================", bcolors.ENDC)
 
     except ValueError as e:
         print(str(e))
